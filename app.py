@@ -55,9 +55,7 @@ app.layout = html.Div(style={'textAlign': 'center'}, children=[
             )
         })
     ),
-    dbc.CardDeck(style={'width': '30%', 'margin': 'auto'}, children=[
-        dbc.Card(id='earthquake-info')
-    ])
+    dbc.CardDeck(style={'width': '30%', 'margin': 'auto'}, id='earthquake-info')
 ])
 
 
@@ -127,7 +125,19 @@ def _update_map(start_date, end_date):
 def display_click_data(clickData):
     if clickData is None:
         return ''
-    return json.dumps(clickData, indent=2)
+
+    data = clickData['points'][0]['customdata']
+    print(json.dumps(data, indent=2))
+    s = data['time'] / 1000.0
+    time = dt.fromtimestamp(s)
+
+    return dbc.Card(style={'textAlign': 'left'}, children=[
+        dbc.CardHeader(data['title']),
+        dbc.CardBody('URL: ' + str(data['detail'])),
+        dbc.CardBody('Magnitutde: ' + str(data['mag'])),
+        dbc.CardBody('Place: ' + str(data['place'])),
+        dbc.CardBody('Time: ' + time.strftime('%Y-%m-%d %H:%M:%S'))
+    ])
 
 
 if __name__ == '__main__':
